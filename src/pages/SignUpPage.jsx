@@ -3,7 +3,6 @@ import styled from "styled-components"
 import MyWalletLogo from "../components/MyWalletLogo"
 import { useState } from "react"
 import axios from "axios"
-import dotenv from "dotenv"
 
 export default function SignUpPage() {
 
@@ -12,7 +11,6 @@ export default function SignUpPage() {
   const [senha2, setSenha2] = useState("")
   const [nome, setNome] = useState("")
 
-  dotenv.config()
   const navigate = useNavigate()
 
   function singUp (e) {

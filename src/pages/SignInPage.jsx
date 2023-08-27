@@ -3,14 +3,12 @@ import { useNavigate, Link } from "react-router-dom"
 import MyWalletLogo from "../components/MyWalletLogo"
 import { useState } from "react"
 import axios from "axios"
-import dotenv from "dotenv"
 
 export default function SignInPage() {
 
   const [email, setEmail] = useState("")
 	const [senha, setSenha] = useState("")
 
-  dotenv.config()
   const navigate = useNavigate()
 
   function singIn (e) {
