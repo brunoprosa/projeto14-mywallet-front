@@ -4,13 +4,12 @@ import { AiOutlineMinusCircle, AiOutlinePlusCircle } from "react-icons/ai"
 import { useNavigate, Link } from "react-router-dom"
 import axios from "axios"
 import { useEffect, useState } from "react"
-import { normalizePath } from "vite"
 
 export default function HomePage() {
 
-  const [data, setData] = useState({})
   const [saldo, setSaldo] = useState(0)
-  const [transacoes, setTransacoes] = useState([])
+  const [transacoes, setTransacoes] = useState([{dia: 1, descricao: "1", tipo: 'entrada', valor: 2}])
+  const [data, setData] = useState({nome: 'oi', transacoes})
   const [sinal, setSinal] = useState('positivo')
   const token = localStorage.getItem("token")
   const navigate = useNavigate()
@@ -29,20 +28,25 @@ export default function HomePage() {
     promise.then(res => setData(res.data))
     promise.catch(err => console.log(err))
 
-    setTransacoes(data.transacoes)
+  }, [])
+
+  useEffect(() =>{
+    let auxi = [...data.transacoes]
+    setTransacoes(auxi)
     let aux = 0
 
-    for(let i = 0; i < transacoes.length; i++){
-      if(transacoes.tipo === entrada){
-        aux += transacoes[i].valor
+    for(let i = 0; i < data.transacoes.length; i++){
+      if(data.transacoes[i].tipo === "entrada"){
+        aux += data.transacoes[i].valor
       }else{
-        aux -= transacoes[i].valor
+        aux -= data.transacoes[i].valor
       }
     }
     setSaldo(aux)
     if(aux < 0) setSinal('negativo')
+  })
 
-  }, [])
+  console.log(data)
 
   function logOut(){
 
@@ -121,14 +125,9 @@ const TransactionsContainer = styled.article`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  position: relative;
   article {
     display: flex;
-    justify-content: space-between; 
-    position: fixed;
-    bottom: 15px;
-    left: 15px;
-    margin-top: 15px;
+    justify-content: space-between;
     strong {
       font-weight: 700;
       text-transform: uppercase;
