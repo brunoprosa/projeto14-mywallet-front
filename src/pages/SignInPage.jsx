@@ -21,7 +21,7 @@ export default function SignInPage() {
 		})
 
     requisicao.then(resp => {
-        localStorage.setItem("token", resp.data.token);
+        localStorage.setItem("token", resp.data);
         navigate("/home")
       })
     requisicao.catch(err => alert(err))
@@ -30,9 +30,10 @@ export default function SignInPage() {
 
   return (
     <SingInContainer>
-      <form>
-        <MyWalletLogo onSubmit={singIn} />
+      <form onSubmit={singIn}>
+        <MyWalletLogo />
         <input 
+          data-test="email"
           placeholder="E-mail" 
           type="email" 
           value={email}
@@ -40,6 +41,7 @@ export default function SignInPage() {
           required 
         />
         <input 
+          data-test="password"
           placeholder="Senha" 
           type="password" 
           autocomplete="new-password"
@@ -47,7 +49,7 @@ export default function SignInPage() {
           onChange={e => setSenha(e.target.value)}
           required  
         />
-        <button>Entrar</button>
+        <button data-test="sign-in-submit" >Entrar</button>
       </form>
 
       <Link to = '/cadastro'>

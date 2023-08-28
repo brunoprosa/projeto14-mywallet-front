@@ -1,50 +1,97 @@
 import styled from "styled-components"
 import { BiExit } from "react-icons/bi"
 import { AiOutlineMinusCircle, AiOutlinePlusCircle } from "react-icons/ai"
+import { useNavigate, Link } from "react-router-dom"
+import axios from "axios"
+import { useEffect, useState } from "react"
+import { normalizePath } from "vite"
 
 export default function HomePage() {
+
+  const [data, setData] = useState({})
+  const [saldo, setSaldo] = useState(0)
+  const [transacoes, setTransacoes] = useState([])
+  const [sinal, setSinal] = useState('positivo')
+  const token = localStorage.getItem("token")
+  const navigate = useNavigate()
+
+  const config = {
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  }
+
+  useEffect(() =>{
+
+    if(!token) navigate('/')
+
+    const promise = axios.get(`${import.meta.env.VITE_API_URL}/home`, config)
+    promise.then(res => setData(res.data))
+    promise.catch(err => console.log(err))
+
+    setTransacoes(data.transacoes)
+    let aux = 0
+
+    for(let i = 0; i < transacoes.length; i++){
+      if(transacoes.tipo === entrada){
+        aux += transacoes[i].valor
+      }else{
+        aux -= transacoes[i].valor
+      }
+    }
+    setSaldo(aux)
+    if(aux < 0) setSinal('negativo')
+
+  }, [])
+
+  function logOut(){
+
+    const promise = axios.delete(`${import.meta.env.VITE_API_URL}/home`, { token })
+
+    navigate('/')
+
+  }
+
   return (
     <HomeContainer>
       <Header>
-        <h1>Olá, Fulano</h1>
-        <BiExit />
+        <h1 data-test="user-name" >Olá, ${data.nome}</h1>
+        <BiExit data-test="logout" onClick={logOut}/>
       </Header>
 
       <TransactionsContainer>
         <ul>
-          <ListItemContainer>
-            <div>
-              <span>30/11</span>
-              <strong>Almoço mãe</strong>
-            </div>
-            <Value color={"negativo"}>120,00</Value>
-          </ListItemContainer>
-
-          <ListItemContainer>
-            <div>
-              <span>15/11</span>
-              <strong>Salário</strong>
-            </div>
-            <Value color={"positivo"}>3000,00</Value>
-          </ListItemContainer>
+          {transacoes.map(t => 
+            <ListItemContainer>
+              <div>
+                <span>{t.dia}</span>
+                <strong data-test="registry-name" >{t.descricao}</strong>
+              </div>
+              <Value data-test="registry-amount" color={t.tipo}>{t.valor}</Value>
+            </ListItemContainer>
+          )}
         </ul>
 
         <article>
           <strong>Saldo</strong>
-          <Value color={"positivo"}>2880,00</Value>
+          <Value data-test="total-amount" color={sinal}>{saldo}</Value>
         </article>
       </TransactionsContainer>
 
 
       <ButtonsContainer>
-        <button>
-          <AiOutlinePlusCircle />
-          <p>Nova <br /> entrada</p>
-        </button>
-        <button>
-          <AiOutlineMinusCircle />
-          <p>Nova <br />saída</p>
-        </button>
+        <Link to = '/nova-transacao/entrada'>
+          <button data-test="new-income">
+            <AiOutlinePlusCircle />
+            <p>Nova <br /> entrada</p>
+          </button>
+        </Link>
+        <Link to = '/nova-transacao/saida'>
+          <button data-test="new-expense">
+            <AiOutlineMinusCircle />
+            <p>Nova <br />saída</p>
+          </button>
+        </Link>
       </ButtonsContainer>
 
     </HomeContainer>
@@ -74,9 +121,14 @@ const TransactionsContainer = styled.article`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  position: relative;
   article {
     display: flex;
-    justify-content: space-between;   
+    justify-content: space-between; 
+    position: fixed;
+    bottom: 15px;
+    left: 15px;
+    margin-top: 15px;
     strong {
       font-weight: 700;
       text-transform: uppercase;

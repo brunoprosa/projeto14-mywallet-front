@@ -35,6 +35,7 @@ export default function SignUpPage() {
       <form onSubmit={singUp}>
         <MyWalletLogo />
         <input 
+          data-test="name"
           placeholder="Nome" 
           type="text" 
           value={nome}
@@ -42,6 +43,7 @@ export default function SignUpPage() {
           required 
         />
         <input 
+          data-test="email"
           placeholder="E-mail" 
           type="email" 
           value={email}
@@ -49,6 +51,7 @@ export default function SignUpPage() {
           required 
         />
         <input 
+          data-test="password"
           placeholder="Senha" 
           type="password" 
           autocomplete="new-password"
@@ -57,6 +60,7 @@ export default function SignUpPage() {
           required 
         />
         <input 
+          data-test="conf-password"
           placeholder="Confirme a senha" 
           type="password" 
           autocomplete="new-password" 
@@ -64,7 +68,7 @@ export default function SignUpPage() {
           onChange={e => setSenha2(e.target.value)}
           required 
         />
-        <button>Cadastrar</button>
+        <button data-test="sign-up-submit" >Cadastrar</button>
       </form>
 
       <Link to = '/'>
